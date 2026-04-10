@@ -1,0 +1,115 @@
+---
+title: "week 9"
+format: html
+editor: visual
+---
+
+```{r}
+library(readr)
+library(tidyverse)
+
+data <- read_csv("student_info (2).csv")
+
+data <- data %>%
+  rename(
+    year_of_study = `year of study`,
+    programming_experience = `level of programming experience (e.g. beginner, intermediate, advanced)`,
+    programming_languages = `programming languages (R, Python, Julia, etc.)`,
+    research_interests = `research / academic interests`,
+    group_name = `Group number / name`
+  )
+
+colnames(data)
+head(data$research_interests)
+
+research_dist <- data %>%
+  separate_rows(research_interests, sep = "[,;]\\s*") %>%
+  count(research_interests, sort = TRUE)
+
+research_dist
+```
+
+```{r}
+library(readr)
+library(tidyverse)
+```
+
+```{r}
+data <- read_csv("student_info (2).csv")
+```
+
+```{r}
+install.packages("janitor")
+```
+
+```{r}
+library(janitor)
+```
+
+```{r}
+library(readr)
+library(tidyverse)
+library(janitor)
+
+data <- read_csv("student_info (2).csv")
+
+data <- clean_names(data)
+
+colnames(data)
+```
+
+```{r}
+research_dist <- data %>%
+  separate_rows(research_academic_interests, sep = "[,;]\\s*") %>%
+  count(research_academic_interests, sort = TRUE)
+
+research_dist
+```
+
+> The distribution of research interests in the class shows that the most common interest is healthcare.
+
+```{r}
+colnames(data)
+```
+
+```{r}
+data <- data %>%
+  mutate(
+    prog_exp_num = case_when(
+      str_to_lower(level_of_programming_experience_e_g_beginner_intermediate_advanced) == "beginner" ~ 1,
+      str_to_lower(level_of_programming_experience_e_g_beginner_intermediate_advanced) == "intermediate" ~ 2,
+      str_to_lower(level_of_programming_experience_e_g_beginner_intermediate_advanced) == "advanced" ~ 3,
+      TRUE ~ NA_real_
+    )
+  )
+```
+
+```{r}
+avg_exp_group <- data %>%
+  group_by(group_number_name) %>%
+  summarize(avg_experience = mean(prog_exp_num, na.rm = TRUE))
+
+avg_exp_group
+```
+
+```{r}
+avg_exp_group
+```
+
+> The average programming experience varies across groups. Group 3 and 2 has the highest average programming experience 2.0 , while Group 6 has the lowest 1.0.
+
+```{r}
+language_by_group <- data %>%
+  separate_rows(programming_languages_r_python_julia_etc, sep = "[,;]\\s*") %>%
+  count(group_number_name, programming_languages_r_python_julia_etc, sort = TRUE)
+
+language_by_group
+```
+
+> The most commonly known programming languages in the class are R, matlab, and SAS. The number of students familiar with each language varies by group, with some groups having more experience in certain languages than others. Overall, R and matlab appear to be the most widely known languages.
+
+```{r}
+unique(data$year_of_study)
+```
+
+> Graduate students generally have more programming experience than undergraduate students. This is likely because graduate students have had more exposure to programming through advanced coursework and research opportunities.
